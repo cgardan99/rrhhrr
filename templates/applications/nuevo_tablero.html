@@ -1,0 +1,66 @@
+{% extends "../base.html" %}
+{% block content %}
+<h1>Crear un nuevo tablero</h1><br>
+<form method="POST">
+    <div class="input-group">
+        <label class="input-group-text" for="nombre">Nombre del tablero</label>
+        <input class="form-control" type="text" name="nombre" maxlength="100" placeholder="Contrataciones Proyecto 1">
+    </div><br><br>
+    <h3>Define las fases de contratación.</h3>
+    <button class="btn btn-primary">Añadir fase ➕</button>
+    <div class="row justify-content-center">
+        <div class="card text-bg-dark p-3 m-3 col-md-3" data-posicion="1">
+            <div class="card-header">
+                <div class="input-group">
+                    <input class="form-control nombre-fase" type="text" maxlength="100" value="Aplicantes">
+                </div>
+            </div>
+            <div class="card-body">
+                <label>Descripción de la fase</label>
+                <textarea rows="7" class="descripcion w-100">Aquí se depositarán todos los interesados en la vacante.</textarea>
+            </div>
+        </div>
+        <div class="card text-bg-dark p-3 m-3 col-md-3" data-posicion="2">
+            <div class="card-header">
+                <div class="input-group">
+                    <input class="form-control nombre-fase" type="text" maxlength="100" value="Entrevista">
+                </div>
+            </div>
+            <div class="card-body">
+                <label>Descripción de la fase</label>
+                <textarea rows="7" class="descripcion w-100">Entrevista telefónica/presencial con un miembro del equipo de Recursos Humanos.
+Se discuten detalles sobre la experiencia laboral, motivación para unirse a la empresa y expectativas salariales.
+Se proporciona información sobre la empresa y se resuelven las preguntas iniciales de los candidatos.
+                </textarea>
+            </div>
+        </div>
+        <div class="card text-bg-dark p-3 m-3 col-md-3" data-posicion="3">
+            <div class="card-header">
+                <div class="input-group">
+                    <input class="form-control nombre-fase" type="text" maxlength="100" value="Ofertas de Empleo">
+                </div>
+            </div>
+            <div class="card-body">
+                <label>Descripción de la fase</label>
+                <textarea rows="7" class="descripcion w-100">Si el candidato es seleccionado, se le hace una oferta de empleo que incluye detalles sobre salario, beneficios y otros términos.
+Posible negociación sobre los términos de la oferta.
+Una vez que se llega a un acuerdo, se extiende una oferta por escrito.
+                </textarea>
+            </div>
+        </div>
+        <div class="card text-bg-dark p-3 m-3 col-md-3" data-posicion="4">
+            <div class="card-header">
+                <div class="input-group">
+                    <input class="form-control nombre-fase" type="text" maxlength="100" value="Contratados">
+                </div>
+            </div>
+            <div class="card-body">
+                <label>Descripción de la fase</label>
+                <textarea rows="7" class="descripcion w-100">Una vez aceptada la oferta, se proporciona información sobre la inducción y el proceso de incorporación.
+Se da la bienvenida al nuevo empleado al equipo y se inicia el proceso de integración en la empresa.
+                </textarea>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock content %}
