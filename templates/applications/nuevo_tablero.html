@@ -7,9 +7,9 @@
         <input class="form-control" type="text" name="nombre" maxlength="100" placeholder="Contrataciones Proyecto 1">
     </div><br><br>
     <h3>Define las fases de contratación.</h3>
-    <button class="btn btn-primary">Añadir fase ➕</button>
-    <div class="row justify-content-center">
-        <div class="card text-bg-dark p-3 m-3 col-md-3" data-posicion="1">
+    <button id="anadir-fase" class="btn btn-primary" type="button">Añadir fase ⨁</button>
+    <div class="row justify-content-center" id="contenedor-fases">
+        <div class="card fase text-bg-dark p-3 m-3 col-md-3" data-posicion="1">
             <div class="card-header">
                 <div class="input-group">
                     <input class="form-control nombre-fase" type="text" maxlength="100" value="Aplicantes">
@@ -17,10 +17,11 @@
             </div>
             <div class="card-body">
                 <label>Descripción de la fase</label>
-                <textarea rows="7" class="descripcion w-100">Aquí se depositarán todos los interesados en la vacante.</textarea>
+                <textarea rows="7"
+                    class="descripcion w-100">Aquí se depositarán todos los interesados en la vacante.</textarea>
             </div>
         </div>
-        <div class="card text-bg-dark p-3 m-3 col-md-3" data-posicion="2">
+        <div class="card fase text-bg-dark p-3 m-3 col-md-3" data-posicion="2">
             <div class="card-header">
                 <div class="input-group">
                     <input class="form-control nombre-fase" type="text" maxlength="100" value="Entrevista">
@@ -34,7 +35,7 @@ Se proporciona información sobre la empresa y se resuelven las preguntas inicia
                 </textarea>
             </div>
         </div>
-        <div class="card text-bg-dark p-3 m-3 col-md-3" data-posicion="3">
+        <div class="card fase text-bg-dark p-3 m-3 col-md-3" data-posicion="3">
             <div class="card-header">
                 <div class="input-group">
                     <input class="form-control nombre-fase" type="text" maxlength="100" value="Ofertas de Empleo">
@@ -48,7 +49,7 @@ Una vez que se llega a un acuerdo, se extiende una oferta por escrito.
                 </textarea>
             </div>
         </div>
-        <div class="card text-bg-dark p-3 m-3 col-md-3" data-posicion="4">
+        <div class="card fase text-bg-dark p-3 m-3 col-md-3" data-posicion="4">
             <div class="card-header">
                 <div class="input-group">
                     <input class="form-control nombre-fase" type="text" maxlength="100" value="Contratados">
@@ -64,3 +65,36 @@ Se da la bienvenida al nuevo empleado al equipo y se inicia el proceso de integr
     </div>
 </form>
 {% endblock content %}
+{% block js_scripts %}
+<script src='https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.js'></script>
+<script>
+    function construir_fase(fase) {
+        var html = `<div class="card fase text-bg-dark p-3 m-3 col-md-3" data-posicion="${fase}">
+            <div class="card-header">
+                <div class="input-group">
+                    <input class="form-control nombre-fase" type="text" maxlength="100" placeholder="Añadir titulo de fase">
+                </div>
+            </div>
+            <div class="card-body">
+                <label>Descripción de la fase</label>
+                <textarea rows="7" placeholder="Describe la fase." class="descripcion w-100"></textarea>
+            </div>
+        </div>`;
+        return html;
+    }
+    function anadir_fase() {
+        var fases = $(".fase").sort((e, v) =>
+            console.log($(v).data("posicion")),
+        );
+        var siguiente_fase = fases.length + 1;
+        var fase_html = construir_fase(siguiente_fase);
+        $("#contenedor-fases").append(fase_html);
+    }
+    $(window).on("load", function () {
+        dragula([document.querySelector('#contenedor-fases')]).on('drop', function (el) {
+            
+        });
+        $("#anadir-fase").on("click", anadir_fase);
+    });
+</script>
+{% endblock js_scripts %}
