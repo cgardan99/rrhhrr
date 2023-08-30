@@ -12,7 +12,9 @@
         <div class="card fase text-bg-dark p-3 m-3 col-md-3" data-posicion="1">
             <div class="card-header">
                 <div class="input-group">
+                    <span class="numero-fase input-group-text">Fase 1</span>
                     <input class="form-control nombre-fase" type="text" maxlength="100" value="Aplicantes">
+                    <button class="btn btn-outline-danger borrar-fase" type="button">❌</button>
                 </div>
             </div>
             <div class="card-body">
@@ -24,7 +26,9 @@
         <div class="card fase text-bg-dark p-3 m-3 col-md-3" data-posicion="2">
             <div class="card-header">
                 <div class="input-group">
+                    <span class="numero-fase input-group-text">Fase 2</span>
                     <input class="form-control nombre-fase" type="text" maxlength="100" value="Entrevista">
+                    <button class="btn btn-outline-danger borrar-fase" type="button">❌</button>
                 </div>
             </div>
             <div class="card-body">
@@ -38,7 +42,9 @@ Se proporciona información sobre la empresa y se resuelven las preguntas inicia
         <div class="card fase text-bg-dark p-3 m-3 col-md-3" data-posicion="3">
             <div class="card-header">
                 <div class="input-group">
+                    <span class="numero-fase input-group-text">Fase 3</span>
                     <input class="form-control nombre-fase" type="text" maxlength="100" value="Ofertas de Empleo">
+                    <button class="btn btn-outline-danger borrar-fase" type="button">❌</button>
                 </div>
             </div>
             <div class="card-body">
@@ -52,7 +58,9 @@ Una vez que se llega a un acuerdo, se extiende una oferta por escrito.
         <div class="card fase text-bg-dark p-3 m-3 col-md-3" data-posicion="4">
             <div class="card-header">
                 <div class="input-group">
+                    <span class="numero-fase input-group-text">Fase 4</span>
                     <input class="form-control nombre-fase" type="text" maxlength="100" value="Contratados">
+                    <button class="btn btn-outline-danger borrar-fase" type="button">❌</button>
                 </div>
             </div>
             <div class="card-body">
@@ -72,7 +80,9 @@ Se da la bienvenida al nuevo empleado al equipo y se inicia el proceso de integr
         var html = `<div class="card fase text-bg-dark p-3 m-3 col-md-3" data-posicion="${fase}">
             <div class="card-header">
                 <div class="input-group">
+                    <span class="numero-fase input-group-text">Fase ${fase}</span>
                     <input class="form-control nombre-fase" type="text" maxlength="100" placeholder="Añadir titulo de fase">
+                    <button class="btn btn-outline-danger borrar-fase" type="button">❌</button>
                 </div>
             </div>
             <div class="card-body">
@@ -82,19 +92,35 @@ Se da la bienvenida al nuevo empleado al equipo y se inicia el proceso de integr
         </div>`;
         return html;
     }
+
+    function cargar_eventos() {
+        $(".borrar-fase").off("click", borrar_fase);
+        $(".borrar-fase").on("click", borrar_fase);
+    }
     function anadir_fase() {
-        var fases = $(".fase").sort((e, v) =>
-            console.log($(v).data("posicion")),
-        );
+        var fases = $(".fase");
         var siguiente_fase = fases.length + 1;
         var fase_html = construir_fase(siguiente_fase);
         $("#contenedor-fases").append(fase_html);
+        cargar_eventos();
+    }
+    function borrar_fase(evt) {
+        var padre = $(evt.target).parentNode().parentNode().parentNode();
+        padre.remove();
+        
     }
     $(window).on("load", function () {
         dragula([document.querySelector('#contenedor-fases')]).on('drop', function (el) {
-            
+            var fases = $(".fase");
+            var fase_actual = 1;
+            fases.each((e, v) => {
+                v.dataset["posicion"] = fase_actual;
+                $(v).find(".numero-fase").html(`Fase ${fase_actual}`)
+                fase_actual++;
+            });
         });
         $("#anadir-fase").on("click", anadir_fase);
+        cargar_eventos();
     });
 </script>
 {% endblock js_scripts %}
