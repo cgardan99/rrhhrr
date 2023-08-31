@@ -1,39 +1,44 @@
 {% extends "../base.html" %}
 {% block content %}
 <h1>Crear un nuevo tablero</h1><br>
-<form method="POST">
+<form id="formulario-tablero" method="POST">
     <div class="input-group">
         <label class="input-group-text" for="nombre">Nombre del tablero</label>
         <input class="form-control" type="text" name="nombre" maxlength="100" placeholder="Contrataciones Proyecto 1">
     </div><br><br>
     <h3>Define las fases de contratación.</h3>
-    <button id="anadir-fase" class="btn btn-primary" type="button">Añadir fase ⨁</button>
+    <div class="w-100">
+        <button id="anadir-fase" class="float-start btn btn-primary" type="button">Añadir fase ⨁</button>
+        <button id="crear-tablero" class="float-end btn btn-success" type="button">Finalizar</button>
+        <button id="submit-form" class="d-none"></button>
+    </div>
+    <br><br>
     <div class="row justify-content-center" id="contenedor-fases">
         <div class="card fase text-bg-dark p-3 m-3 col-md-3" data-posicion="1">
             <div class="card-header">
                 <div class="input-group">
                     <span class="numero-fase input-group-text">Fase 1</span>
-                    <input class="form-control nombre-fase" type="text" maxlength="100" value="Aplicantes">
+                    <input class="form-control nombre-fase" type="text" maxlength="100" value="Aplicantes" required>
                     <button class="btn btn-outline-danger borrar-fase" type="button">❌</button>
                 </div>
             </div>
             <div class="card-body">
                 <label>Descripción de la fase</label>
                 <textarea rows="7"
-                    class="descripcion w-100">Aquí se depositarán todos los interesados en la vacante.</textarea>
+                    class="descripcion w-100" required>Aquí se depositarán todos los interesados en la vacante.</textarea>
             </div>
         </div>
         <div class="card fase text-bg-dark p-3 m-3 col-md-3" data-posicion="2">
             <div class="card-header">
                 <div class="input-group">
                     <span class="numero-fase input-group-text">Fase 2</span>
-                    <input class="form-control nombre-fase" type="text" maxlength="100" value="Entrevista">
+                    <input class="form-control nombre-fase" type="text" maxlength="100" value="Entrevista" required>
                     <button class="btn btn-outline-danger borrar-fase" type="button">❌</button>
                 </div>
             </div>
             <div class="card-body">
                 <label>Descripción de la fase</label>
-                <textarea rows="7" class="descripcion w-100">Entrevista telefónica/presencial con un miembro del equipo de Recursos Humanos.
+                <textarea rows="7" class="descripcion w-100" required>Entrevista telefónica/presencial con un miembro del equipo de Recursos Humanos.
 Se discuten detalles sobre la experiencia laboral, motivación para unirse a la empresa y expectativas salariales.
 Se proporciona información sobre la empresa y se resuelven las preguntas iniciales de los candidatos.
                 </textarea>
@@ -43,13 +48,13 @@ Se proporciona información sobre la empresa y se resuelven las preguntas inicia
             <div class="card-header">
                 <div class="input-group">
                     <span class="numero-fase input-group-text">Fase 3</span>
-                    <input class="form-control nombre-fase" type="text" maxlength="100" value="Ofertas de Empleo">
+                    <input class="form-control nombre-fase" type="text" maxlength="100" value="Ofertas de Empleo" required>
                     <button class="btn btn-outline-danger borrar-fase" type="button">❌</button>
                 </div>
             </div>
             <div class="card-body">
                 <label>Descripción de la fase</label>
-                <textarea rows="7" class="descripcion w-100">Si el candidato es seleccionado, se le hace una oferta de empleo que incluye detalles sobre salario, beneficios y otros términos.
+                <textarea rows="7" class="descripcion w-100" required>Si el candidato es seleccionado, se le hace una oferta de empleo que incluye detalles sobre salario, beneficios y otros términos.
 Posible negociación sobre los términos de la oferta.
 Una vez que se llega a un acuerdo, se extiende una oferta por escrito.
                 </textarea>
@@ -59,13 +64,13 @@ Una vez que se llega a un acuerdo, se extiende una oferta por escrito.
             <div class="card-header">
                 <div class="input-group">
                     <span class="numero-fase input-group-text">Fase 4</span>
-                    <input class="form-control nombre-fase" type="text" maxlength="100" value="Contratados">
+                    <input class="form-control nombre-fase" type="text" maxlength="100" value="Contratados" required>
                     <button class="btn btn-outline-danger borrar-fase" type="button">❌</button>
                 </div>
             </div>
             <div class="card-body">
                 <label>Descripción de la fase</label>
-                <textarea rows="7" class="descripcion w-100">Una vez aceptada la oferta, se proporciona información sobre la inducción y el proceso de incorporación.
+                <textarea rows="7" class="descripcion w-100" required>Una vez aceptada la oferta, se proporciona información sobre la inducción y el proceso de incorporación.
 Se da la bienvenida al nuevo empleado al equipo y se inicia el proceso de integración en la empresa.
                 </textarea>
             </div>
@@ -81,18 +86,50 @@ Se da la bienvenida al nuevo empleado al equipo y se inicia el proceso de integr
             <div class="card-header">
                 <div class="input-group">
                     <span class="numero-fase input-group-text">Fase ${fase}</span>
-                    <input class="form-control nombre-fase" type="text" maxlength="100" placeholder="Añadir titulo de fase">
+                    <input class="form-control nombre-fase" type="text" maxlength="100" placeholder="Añadir titulo de fase" required>
                     <button class="btn btn-outline-danger borrar-fase" type="button">❌</button>
                 </div>
             </div>
             <div class="card-body">
                 <label>Descripción de la fase</label>
-                <textarea rows="7" placeholder="Describe la fase." class="descripcion w-100"></textarea>
+                <textarea rows="7" placeholder="Describe la fase." class="descripcion w-100" required></textarea>
             </div>
         </div>`;
         return html;
     }
-
+    function construir_fase_payload(orden, titulo, descripcion, modo_edicion = false, id_anterior = 0) {
+        var objeto_fase;
+        if (modo_edicion) {
+            objeto_fase = {
+                orden: orden,
+                titulo: titulo,
+                descripcion: descripcion,
+                id_anterior: id_anterior
+            }
+        } else {
+            objeto_fase = {
+                orden: orden,
+                titulo: titulo,
+                descripcion: descripcion
+            }
+        }
+        return objeto_fase
+    }
+    function enumerar_elementos() {
+        var fases = $(".fase");
+        var fase_actual = 1;
+        fases.each((e, v) => {
+            v.dataset["posicion"] = fase_actual;
+            $(v).find(".numero-fase").html(`Fase ${fase_actual}`)
+            fase_actual++;
+        });
+    }
+    function enviar_tablero() {
+        var formulario = $("#formulario-tablero")[0];
+        if(!formulario.checkValidity()) {
+            $("#submit-form").click();
+        }
+    }
     function cargar_eventos() {
         $(".borrar-fase").off("click", borrar_fase);
         $(".borrar-fase").on("click", borrar_fase);
@@ -102,24 +139,23 @@ Se da la bienvenida al nuevo empleado al equipo y se inicia el proceso de integr
         var siguiente_fase = fases.length + 1;
         var fase_html = construir_fase(siguiente_fase);
         $("#contenedor-fases").append(fase_html);
+        $(".borrar-fase").prop("disabled", false);
         cargar_eventos();
     }
     function borrar_fase(evt) {
-        var padre = $(evt.target).parentNode().parentNode().parentNode();
+        var padre = $(evt.target).parent().parent().parent();
         padre.remove();
-        
+        if ($(".fase").length < 2) {
+            $(".borrar-fase").prop("disabled", true);
+        }
+        enumerar_elementos();
     }
     $(window).on("load", function () {
         dragula([document.querySelector('#contenedor-fases')]).on('drop', function (el) {
-            var fases = $(".fase");
-            var fase_actual = 1;
-            fases.each((e, v) => {
-                v.dataset["posicion"] = fase_actual;
-                $(v).find(".numero-fase").html(`Fase ${fase_actual}`)
-                fase_actual++;
-            });
+            enumerar_elementos();
         });
         $("#anadir-fase").on("click", anadir_fase);
+        $("#crear-tablero").on("click", enviar_tablero);
         cargar_eventos();
     });
 </script>
