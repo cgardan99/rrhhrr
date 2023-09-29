@@ -6,4 +6,51 @@
 <a href="">Nuevo Tablero</a>
 <a href="">Mis Tableros</a>
 <a href="">Lista de Candidatos</a>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Launch demo modal
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Editar Candidato</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label class="input-group-text" for="nombre">Nombre del Candidato</label>
+                    <input class="form-control" type="text" name="nombre" maxlength="100" value="Juan Pérez" placeholder="">
+                </div><br>
+                <div class="input-group">
+                    <label class="input-group-text" for="nombre">Fecha de Nacimiento</label>
+                    <input class="form-control" type="text" name="nombre" maxlength="100" value="1999-09-10" placeholder="">
+                </div><br>
+                <div class="input-group">
+                    <label class="input-group-text" for="nombre">Estado Civil</label>
+                    <input class="form-control" type="text" name="nombre" maxlength="100" value="Soltero" placeholder="">
+                </div><br>
+                <div class="input-group">
+                    <label class="input-group-text" for="nombre">Nacionalidad</label>
+                    <input class="form-control" type="text" name="nombre" maxlength="100" value="Mexicano" placeholder="">
+                </div><br>
+                <div class="input-group">
+                    <label class="input-group-text" for="nombre">Teléfono</label>
+                    <input class="form-control" type="text" name="nombre" maxlength="100" value="449 383 3215" placeholder="">
+                </div><br>
+                <div class="input-group">
+                    <label class="input-group-text" for="nombre">Correo Electrónico</label>
+                    <input class="form-control" type="text" name="nombre" maxlength="100" value="juan@perez.com" placeholder="">
+                </div><br>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}

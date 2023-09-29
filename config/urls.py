@@ -19,7 +19,7 @@ from django.contrib import admin
 from django.urls import path
 
 urlpatterns = [
-    path('', include('applications.urls')),
+    path('tableros/', include('applications.urls')),
     path("accounts/", include("allauth.urls")),
     path('admin/', admin.site.urls),
 ]

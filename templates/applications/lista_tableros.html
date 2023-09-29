@@ -1,0 +1,65 @@
+{% extends "../base.html" %}
+{% block content %}
+<h1>Listado de Tableros</h1>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">¿Seguro de eliminar al Tablero?</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <b>¡No podrás deshacer esta acción!</b>. El Tablero será eliminado, incluyendo todos los Candidatos y documentos adjuntos en este.<br>
+                <b>Tablero: </b> Proyecto Contrataciones SLP.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-danger">Entiendo. Eliminar.</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<table class="table table-dark table-hover table-striped">
+    <tr>
+        <th colspan="2">Nombre del Tablero</th>
+        <th>Creado Por</th>
+        <th>Última modificación</th>
+        <th>¿Eliminar?</th>
+    </tr>
+    <tr>
+        <td>
+            <button class="btn btn-primary btn-sm">Ir</button>
+        </td>
+        <td>Proyecto de Contrataciones SLP</td>
+        <td>Usuario 1</td>
+        <td>2023-09-12 12:20 am</td>
+        <td>
+            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">¿Eliminar?</button>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <button class="btn btn-primary btn-sm">Ir</button>
+        </td>
+        <td>Contrataciones Lista de Raya Limpieza</td>
+        <td>Usuario 2</td>
+        <td>2023-09-13 11:20 pm</td>
+        <td>
+            <button class="btn btn-danger btn-sm">¿Eliminar?</button>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <button class="btn btn-primary btn-sm">Ir</button>
+        </td>
+        <td>Proyecto Desarrollo Grupo ALSEA</td>
+        <td>Usuario 3</td>
+        <td>2023-09-12 12:20 am</td>
+        <td>
+            <button class="btn btn-danger btn-sm">¿Eliminar?</button>
+        </td>
+    </tr>
+</table>
+{% endblock content %}
