@@ -7,6 +7,7 @@ from django.shortcuts import render
 class InicioView(LoginRequiredMixin, TemplateView):
     template_name = "applications/inicio.html"
 
+
 class ListaTablerosView(LoginRequiredMixin, TemplateView):
     template_name = "applications/lista_tableros.html"
 
