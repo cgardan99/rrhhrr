@@ -3,5 +3,5 @@ from django.urls import include, path
 from .views import TableroView
 
 urlpatterns = [
-    path("tablero", TableroView.as_view(), name="inicio"),
+    path("tablero", TableroView.as_view(), name="tablero"),
 ]

@@ -36,9 +36,12 @@ class Comentario(models.Model):
     candidato = models.ForeignKey(Candidato, on_delete=models.CASCADE)
     fase = models.ForeignKey(Fase, on_delete=models.CASCADE)
     texto = models.TextField()
-
+    creado_el = models.DateTimeField()
 
 class Archivo(models.Model):
     subido_por = models.ForeignKey(User, on_delete=models.CASCADE)
+    fase = models.ForeignKey(Fase, on_delete=models.CASCADE)
+    candidato = models.ForeignKey(Candidato, on_delete=models.CASCADE)
+    creado_el = models.DateTimeField()
     archivo = models.FileField(upload_to="")
     descripcion = models.CharField(max_length=100)

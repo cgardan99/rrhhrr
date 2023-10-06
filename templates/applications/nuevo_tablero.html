@@ -4,7 +4,7 @@
 <form id="formulario-tablero" method="POST">
     <div class="input-group">
         <label class="input-group-text" for="nombre">Nombre del tablero</label>
-        <input class="form-control" type="text" name="nombre" maxlength="100" placeholder="Contrataciones Proyecto 1">
+        <input id="nombre-tablero" class="form-control" type="text" name="nombre" maxlength="100" placeholder="Contrataciones Proyecto 1">
     </div><br><br>
     <h3>Define las fases de contratación.</h3>
     <div class="w-100">
@@ -97,14 +97,14 @@ Se da la bienvenida al nuevo empleado al equipo y se inicia el proceso de integr
         </div>`;
         return html;
     }
-    function construir_fase_payload(orden, titulo, descripcion, modo_edicion = false, id_anterior = 0) {
+    function construir_fase_payload(orden, titulo, descripcion, modo_edicion = false, id_objeto = 0) {
         var objeto_fase;
         if (modo_edicion) {
             objeto_fase = {
                 orden: orden,
                 titulo: titulo,
                 descripcion: descripcion,
-                id_anterior: id_anterior
+                id_objeto: id_objeto
             }
         } else {
             objeto_fase = {
@@ -129,6 +129,40 @@ Se da la bienvenida al nuevo empleado al equipo y se inicia el proceso de integr
         if(!formulario.checkValidity()) {
             $("#submit-form").click();
         }
+        var fases = [];
+        $(".fase").each((e,v) => {
+            fases.push(
+                {% if modo_edicion %}
+                construir_fase_payload(
+                    orden=$(v).data("posicion"),
+                    titulo=$(v).find(".nombre-fase").val(),
+                    descripcion=$(v).find(".descripcion").val(),
+                    modo_edicion=true,
+                    id_objeto=$(v).data("id-objeto"),
+                )
+                {% else %}
+                construir_fase_payload(
+                    orden=$(v).data("posicion"),
+                    titulo=$(v).find(".nombre-fase").val(),
+                    descripcion=$(v).find(".descripcion").val(),
+                )
+                {% endif %}
+            )
+        });
+        var payload = {
+            fases: fases,
+            nombre: $("#nombre-tablero").val(),
+        }
+        fetch("{% url 'tablero' %}", {
+            method: "POST",
+            body: JSON.stringify(
+                payload
+            ),
+            headers: { "X-CSRFToken": "{{ csrf_token }}", "Content-Type": "application/json" }
+        })
+            .then(res => res.json())
+            .then(res => res.status == 200 ? alert("Success.") : alert("Invalid input"))
+            .catch(err => console.error(err));
     }
     function cargar_eventos() {
         $(".borrar-fase").off("click", borrar_fase);

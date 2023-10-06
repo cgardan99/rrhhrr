@@ -17,11 +17,14 @@ class TableroSerializer(serializers.Serializer):
         )
         Model = Tablero
 
+    def create(self, validated_data):
+        return Tablero(**validated_data)
+
 
 class FaseSerializer(serializers.Serializer):
     tablero_id = serializers.IntegerField()
     nombre = serializers.CharField(max_length=100)
-    descripcion = serializers.TextField()
+    descripcion = serializers.CharField()
     creado_el = serializers.DateTimeField()
     ultima_actualizacion = serializers.DateTimeField()
     activa = serializers.BooleanField(default=True)
