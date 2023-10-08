@@ -1,10 +1,10 @@
 from django.urls import include, path
 
-from .views import InicioView, NuevoTableroView, ListaTablerosView, TableroView
+from .views import InicioView, NuevoTableroView, TableroListView, TableroView
 
 urlpatterns = [
     path("", InicioView.as_view(), name="inicio"),
-    path("lista_tableros", ListaTablerosView.as_view(), name="tablero"),
-    path("tablero", TableroView.as_view(), name="tablero"),
+    path("lista_tableros", TableroListView.as_view(), name="lista_tableros"),
+    path("tablero/<tablero_id>/", TableroView.as_view(), name="tablero"),
     path("nuevo_tablero", NuevoTableroView.as_view(), name="nuevo_tablero"),
 ]

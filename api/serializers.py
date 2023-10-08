@@ -1,5 +1,8 @@
 from applications.models import Fase, Tablero
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
+
+User = get_user_model()
 
 
 class TableroSerializer(serializers.Serializer):
@@ -18,22 +21,24 @@ class TableroSerializer(serializers.Serializer):
         Model = Tablero
 
     def create(self, validated_data):
+        validated_data["modificado_por"] = User.objects.get(
+            pk=validated_data["modificado_por"]
+        )
         return Tablero(**validated_data)
 
 
 class FaseSerializer(serializers.Serializer):
-    tablero_id = serializers.IntegerField()
+    tablero = serializers.IntegerField()
     nombre = serializers.CharField(max_length=100)
     descripcion = serializers.CharField()
     creado_el = serializers.DateTimeField()
     ultima_actualizacion = serializers.DateTimeField()
     activa = serializers.BooleanField(default=True)
     es_primer_fase = serializers.BooleanField(default=False)
-    siguiente_fase = serializers.IntegerField()
 
     class Meta:
         fields = (
-            "tablero_id",
+            "tablero",
             "nombre",
             "descripcion",
             "creado_el",
@@ -44,4 +49,6 @@ class FaseSerializer(serializers.Serializer):
         )
         Model = Fase
 
-
+    def create(self, validated_data):
+        validated_data["tablero"] = Tablero.objects.get(pk=validated_data["tablero"])
+        return Fase(**validated_data)
