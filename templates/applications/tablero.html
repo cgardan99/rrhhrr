@@ -1,6 +1,7 @@
 {% extends "../base.html" %}
 {% block content %}
-<h1>Proyecto de Contratación 1</h1>
+<h1>{{ object.nombre }}</h1>
+<h5>Ultima modificación: {{ object.ultima_actualizacion }}</h5>
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -138,11 +139,13 @@
 </div>
 
 <div id="tablero" class="h-100 d-flex flex-row flex-nowrap position-absolute">
+    {% for fase in fases %}
     <div class="card m-3">
         <div class="card-header">
-            Fase 1: Aplicantes
+            Fase {{ forloop.counter }}: {{ fase.nombre }}
         </div>
-        <div class="card-body">
+        <div class="card-body contenedor h-100">
+            {% if forloop.first %}
             <div class="card m-2">
                 <div class="card-body">
                     <h5 class="card-title">Juan Alberto Arena</h5>
@@ -164,82 +167,18 @@
                         data-bs-target="#exampleModal">Eliminar Candidato</a>
                 </div>
             </div>
-            <div class="card m-2">
-                <div class="card-body">
-                    <h5 class="card-title">Abelardo Leandro Carlos</h5>
-                    <h6 class="card-subtitle mb-2 text-body-secondary">Puesto deseado: Control de Máquinas</h6>
-                    <p class="card-text">Fecha de inicio de proceso: 2023-09-11</p>
-                    <a href="#" class="btn btn-secondary btn-sm card-link">Ver Candidato</a>
-                    <button href="#" class="btn btn-danger btn-sm card-link" data-bs-toggle="modal"
-                        data-bs-target="#exampleModal">Eliminar Candidato</a>
-                </div>
-            </div>
-            <div class="card m-2">
-                <div class="card-body">
-                    <h5 class="card-title">Carlos Abelardo Leandro</h5>
-                    <h6 class="card-subtitle mb-2 text-body-secondary">Puesto deseado: Control de Máquinas</h6>
-                    <p class="card-text">Fecha de inicio de proceso: 2023-09-12</p>
-                    <a href="#" class="btn btn-secondary btn-sm card-link">Ver Candidato</a>
-                    <button href="#" class="btn btn-danger btn-sm card-link" data-bs-toggle="modal"
-                        data-bs-target="#exampleModal">Eliminar Candidato</a>
-                </div>
-            </div>
+            {% endif %}
         </div>
     </div>
-
-    <div class="card m-3">
-        <div class="card-header">
-            Fase 2: Entrevista
-        </div>
-        <div class="card-body">
-            <div class="card m-2">
-                <div class="card-body">
-                    <h5 class="card-title">Leandro Carlos Abelardo</h5>
-                    <h6 class="card-subtitle mb-2 text-body-secondary">Puesto deseado: Control de Máquinas</h6>
-                    <p class="card-text">Fecha de inicio de proceso: 2023-09-13</p>
-                    <a href="#" class="btn btn-secondary btn-sm card-link">Ver Candidato</a>
-                    <button href="#" class="btn btn-danger btn-sm card-link" data-bs-toggle="modal"
-                        data-bs-target="#exampleModal">Eliminar Candidato</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="card m-3">
-        <div class="card-header">
-            Fase 3: Candidatos con Oferta
-        </div>
-        <div class="card-body">
-            <div class="card m-2">
-                <div class="card-body">
-                    <h5 class="card-title">Abelardo Carlos Leandro</h5>
-                    <h6 class="card-subtitle mb-2 text-body-secondary">Puesto deseado: Control de Máquinas</h6>
-                    <p class="card-text">Fecha de inicio de proceso: 2023-09-14</p>
-                    <a href="#" class="btn btn-secondary btn-sm card-link">Ver Candidato</a>
-                    <button href="#" class="btn btn-danger btn-sm card-link" data-bs-toggle="modal"
-                        data-bs-target="#exampleModal">Eliminar Candidato</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="card m-3">
-        <div class="card-header">
-            Fase 4: Contratados
-        </div>
-        <div class="card-body">
-            <div class="card m-2">
-                <div class="card-body">
-                    <h5 class="card-title">Carlos Leandro Abelardo</h5>
-                    <h6 class="card-subtitle mb-2 text-body-secondary">Puesto deseado: Control de Máquinas</h6>
-                    <p class="card-text">Fecha de inicio de proceso: 2023-09-15</p>
-                    <a href="#" class="btn btn-secondary btn-sm card-link">Ver Candidato</a>
-                    <button href="#" class="btn btn-danger btn-sm card-link" data-bs-toggle="modal"
-                        data-bs-target="#exampleModal">Eliminar Candidato</a>
-                </div>
-            </div>
-        </div>
-    </div>
+    {% endfor %}
 </div>
 
 {% endblock content %}
+{% block js_scripts %}
+<script src='https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.js'></script>
+<script>
+    $(window).on("load", function () {
+        dragula([document.querySelector('.contenedor')]);
+    });
+</script>
+{% endblock js_scripts %}

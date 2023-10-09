@@ -4,6 +4,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 import datetime as dt
 
+from applications.models import Tablero
+
+from django.views.generic import View
+from django.shortcuts import redirect
 
 # Create your views here.
 class TableroView(views.APIView):
@@ -46,7 +50,12 @@ class TableroView(views.APIView):
                     if anterior_fase:
                         anterior_fase.siguiente_fase = fase_actual
                         anterior_fase.save()
+                    anterior_fase = fase_actual
                 else:
+                    try:
+                        tablero.delete()
+                    except ValueError:
+                        pass
                     error = True
                     mensajes.append("Por favor, verifica la integridad de las fases.")
                 nro_fase += 1
@@ -61,3 +70,14 @@ class TableroView(views.APIView):
             if not error
             else status.HTTP_400_BAD_REQUEST,
         )
+
+
+class EliminarTableroView(View):
+    def get(self, request, tablero_id):
+        try:
+            tablero_id = int(tablero_id)
+        except (TypeError, ValueError):
+            return redirect('lista_tableros')
+        tablero = Tablero.objects.get(pk=tablero_id)
+        tablero.delete()
+        return redirect('lista_tableros')

@@ -2,20 +2,22 @@
 {% block content %}
 <h1>Listado de Tableros</h1>
 
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<div class="modal fade modal-eliminacion" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="deleteModalLabel">¿Seguro de eliminar al Tablero?</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <b>¡No podrás deshacer esta acción!</b>. El Tablero será eliminado, incluyendo todos los Candidatos y documentos adjuntos en este.<br>
+            <div class="modal-body texto-eliminacion">
+                <b>¡No podrás deshacer esta acción!</b>. El Tablero será eliminado, incluyendo todos los Candidatos y
+                documentos adjuntos en este.<br>
                 <b>Tablero: </b> Proyecto Contrataciones SLP.
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-danger">Entiendo. Eliminar.</button>
+                <a class="btn btn-danger link-eliminar-tablero">Entiendo. Eliminar.</a>
             </div>
         </div>
     </div>
@@ -28,7 +30,7 @@
         <th>¿Eliminar?</th>
     </tr>
     {% for tablero in object_list %}
-    <tr class="tablero">
+    <tr class="tablero tablero-{{ tablero.pk }}">
         <td>
             <a href="{% url 'tablero' tablero.pk %}" class="btn btn-primary btn-sm">Ir</a>
         </td>
@@ -36,9 +38,28 @@
         <td>{{ tablero.modificado_por.username }}</td>
         <td>{{ tablero.ultima_actualizacion }}</td>
         <td>
-            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-tablero-id="{{ tablero.pk }}" data-bs-target="#deleteModal">¿Eliminar?</button>
+            <button class="btn btn-danger btn-sm btn-eliminar-tablero" data-bs-toggle="modal"
+                data-tablero-id="{{ tablero.pk }}" data-bs-target="#deleteModal">¿Eliminar?</button>
         </td>
     </tr>
     {% endfor %}
 </table>
 {% endblock content %}
+{% block js_scripts %}
+<script type="text/javascript">
+    $(window).on("load", function () {
+        $(".btn-eliminar-tablero").on("click", function (evt) {
+            var tablero_id = $(evt.target).data("tablero-id");
+            var tablero_object = $(`.tablero-${tablero_id}`);
+            var tablero_nombre = tablero_object.find(".tablero-nombre").html();
+            var tablero_href = $(".link-eliminar-tablero");
+            $(".texto-eliminacion").html(
+                `<b>¡No podrás deshacer esta acción!</b>. El Tablero será eliminado, incluyendo todos los Candidatos y
+                documentos adjuntos en este.<br>
+                <b>Tablero: </b> ${tablero_nombre}`
+            );
+            tablero_href.attr("href", `/api/tablero/eliminar/${tablero_id}`);
+        });
+    });
+</script>
+{% endblock js_scripts %}
