@@ -1,4 +1,4 @@
-from applications.models import Fase, Tablero
+from applications.models import Fase, Tablero, Candidato
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
@@ -52,3 +52,35 @@ class FaseSerializer(serializers.Serializer):
     def create(self, validated_data):
         validated_data["tablero"] = Tablero.objects.get(pk=validated_data["tablero"])
         return Fase(**validated_data)
+
+
+class CandidatoSerializer(serializers.Serializer):
+    tablero_asignado = serializers.IntegerField()
+    nombres = serializers.CharField(max_length=100)
+    apellidos = serializers.CharField(max_length=100)
+    puesto_deseado = serializers.CharField(max_length=100)
+    fecha_de_nacimiento = serializers.DateField()
+    estado_civil = serializers.CharField(max_length=10)
+    email = serializers.EmailField()
+    telefono = serializers.IntegerField()
+
+    class Meta:
+        fields = (
+            "tablero_asignado",
+            "nombres",
+            "apellidos",
+            "puesto_deseado",
+            "fecha_de_nacimiento",
+            "estado_civil",
+            "email",
+            "telefono",
+        )
+        Model = Fase
+
+    def create(self, validated_data):
+        tablero = Tablero.objects.get(pk=validated_data["tablero_asignado"])
+        validated_data["tablero_asignado"] = tablero
+        candidato = Candidato(**validated_data)
+        candidato.fase_actual = tablero.fase_set.get(es_primer_fase=True)
+        candidato.save()
+        return candidato       

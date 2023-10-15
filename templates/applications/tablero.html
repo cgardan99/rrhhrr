@@ -4,11 +4,12 @@
 <h5>Ultima modificación: {{ object.ultima_actualizacion }}</h5>
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="eliminarCandidatoModal" tabindex="-1" aria-labelledby="eliminarCandidatoModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">¿Seguro de eliminar al Candidato?</h1>
+                <h1 class="modal-title fs-5" id="eliminarCandidatoModalLabel">¿Seguro de eliminar al Candidato?</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -24,7 +25,71 @@
     </div>
 </div>
 
-<div class="modal fade" id="eliminarArchivoModal" tabindex="-1" aria-labelledby="eliminarArchivoModalLabel" aria-hidden="true">
+<div class="modal fade" id="agregarCandidatoModal" tabindex="-1" aria-labelledby="agregarCandidatoModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="agregarCandidatoModalLabel">Añadir un nuevo candidato</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="form-nuevo-candidato" method="POST">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <label class="input-group-text" for="nombre">Nombre(s) del Candidato</label>
+                        <input id="nombre-candidato" class="form-control" type="text" name="nombre" maxlength="100"
+                            placeholder="Santa Juana" required>
+                    </div><br>
+                    <div class="input-group">
+                        <label class="input-group-text" for="apellidos">Apellido(s) del
+                            Candidato</label>
+                        <input id="apellidos-candidato" class="form-control" type="text" name="apellidos"
+                            maxlength="100" placeholder="De la Cruz Saucedo" required>
+                    </div><br>
+                    <div class="input-group">
+                        <label class="input-group-text" for="puesto_deseado">Puesto Deseado</label>
+                        <input id="puesto-deseado" class="form-control" type="text" name="puesto_deseado"
+                            maxlength="100" placeholder="Control de Máquinas" required>
+                    </div><br>
+                    <div class="input-group">
+                        <label class="input-group-text" for="fecha-de-nacimiento">Fecha de
+                            Nacimiento</label>
+                        <input type="date" id="fecha-de-nacimiento" class="form-control" name="fecha_de_nacimiento"
+                            required>
+                    </div><br>
+                    <div class="input-group">
+                        <label class="input-group-text" for="email">Email</label>
+                        <input type="email" id="email" placeholder="correo@example.com" class="form-control" name="email"
+                            required>
+                    </div><br>
+                    <div class="input-group">
+                        <label class="input-group-text" for="telefono">Número de Teléfono</label>
+                        <input type="tel" id="telefono" placeholder="4493846514" class="form-control" name="telefono"
+                            required>
+                    </div><br>
+                    <div class="input-group">
+                        <label class="input-group-text" for="edo_civil">Estado Civil</label>
+                        <select class="form-select" aria-label="Disabled select example" id="edo_civil" name="edo_civil">
+                            <option value="SOLTERO">Soltero</option>
+                            <option value="CASADO">Casado</option>
+                            <option value="DIVORCIADO">Divorciado</option>
+                            <option value="VIUDI">Viudo</option>
+                        </select>
+                    </div><br>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" id="finalizar-agregar-candidato" class="btn btn-success">Añadir
+                        Candidato.</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<button class="btn btn-success" id="agregar-candidato" data-bs-toggle="modal"
+    data-bs-target="#agregarCandidatoModal">Añadir Candidato ⨁</button>
+<div class="modal fade" id="eliminarArchivoModal" tabindex="-1" aria-labelledby="eliminarArchivoModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -76,18 +141,19 @@
                         </td>
                         <td>
                             <button class="btn btn-sm" data-bs-toggle="modal"
-                            data-bs-target="#eliminarArchivoModal">❌</button>
+                                data-bs-target="#eliminarArchivoModal">❌</button>
                         </td>
                     </tr>
                     <tr>
                         <td>2023-09-13 11:20 am</td>
                         <td>
                             <b>Usuario 1 Comentó:</b><br>
-                            <p><i>Se llamó al candidato esta mañana, la intención de la llamada era indicarle la fecha para entrevistarlo, no contestó. Intentaré llamar más tarde.</i></p>
+                            <p><i>Se llamó al candidato esta mañana, la intención de la llamada era indicarle la fecha
+                                    para entrevistarlo, no contestó. Intentaré llamar más tarde.</i></p>
                         </td>
                         <td>
                             <button class="btn btn-sm" data-bs-toggle="modal"
-                            data-bs-target="#eliminarArchivoModal">❌</button>
+                                data-bs-target="#eliminarArchivoModal">❌</button>
                         </td>
                     </tr>
                 </table>
@@ -145,29 +211,19 @@
             Fase {{ forloop.counter }}: {{ fase.nombre }}
         </div>
         <div class="card-body contenedor h-100">
-            {% if forloop.first %}
-            <div class="card m-2">
+            {% for candidato in fase.candidato_set.all %}
+            <div class="card m-2 candidato-card">
                 <div class="card-body">
-                    <h5 class="card-title">Juan Alberto Arena</h5>
-                    <h6 class="card-subtitle mb-2 text-body-secondary">Puesto deseado: Control de Máquinas</h6>
-                    <p class="card-text">Fecha de inicio de proceso: 2023-09-20</p>
+                    <h5 class="card-title">{{ candidato.nombres }} {{ candidato.apellidos }}</h5>
+                    <h6 class="card-subtitle mb-2 text-body-secondary">Puesto deseado: {{ candidato.puesto_deseado }}</h6>
+                    <p class="card-text">Fecha de inicio de proceso: {{ candidato.agregado_el }}</p>
                     <a href="#" class="btn btn-secondary btn-sm card-link" data-bs-toggle="modal"
                         data-bs-target="#candidatoModal">Ver Candidato</a>
                     <button href="#" class="btn btn-danger btn-sm card-link" data-bs-toggle="modal"
-                        data-bs-target="#exampleModal">Eliminar Candidato</a>
+                        data-bs-target="#eliminarCandidatoModal">Eliminar Candidato</a>
                 </div>
             </div>
-            <div class="card m-2">
-                <div class="card-body">
-                    <h5 class="card-title">Leandro Abelardo Carlos</h5>
-                    <h6 class="card-subtitle mb-2 text-body-secondary">Puesto deseado: Control de Máquinas</h6>
-                    <p class="card-text">Fecha de inicio de proceso: 2023-09-10</p>
-                    <a href="#" class="btn btn-secondary btn-sm card-link">Ver Candidato</a>
-                    <button href="#" class="btn btn-danger btn-sm card-link" data-bs-toggle="modal"
-                        data-bs-target="#exampleModal">Eliminar Candidato</a>
-                </div>
-            </div>
-            {% endif %}
+            {% endfor %}
         </div>
     </div>
     {% endfor %}
@@ -178,7 +234,48 @@
 <script src='https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.js'></script>
 <script>
     $(window).on("load", function () {
-        dragula([document.querySelector('.contenedor')]);
+        dragula($(".contenedor").toArray());a
+        $(".form-nuevo-candidato").on("submit", function (e) {
+            e.preventDefault();
+            var payload = {
+                tablero_asignado: {{ object.pk }},
+                nombres: $("#nombre-candidato").val(),
+                apellidos: $("#apellidos-candidato").val(),
+                puesto_deseado: $("#puesto-deseado").val(),
+                fecha_de_nacimiento: $("#fecha-de-nacimiento").val(),
+                email: $("#email").val(),
+                telefono: $("#telefono").val(),
+                estado_civil: $("#edo_civil").val(),
+            }
+            fetch("{% url 'api_candidato' %}", {
+                method: "POST",
+                body: JSON.stringify(
+                    payload
+                ),
+                headers: { "X-CSRFToken": "{{ csrf_token }}", "Content-Type": "application/json" }
+            })
+                .then(res => res.json())
+                .then((res) => {
+                    if(res.messages.length == 0) {
+                        alert("Candidato creado!");
+                        window.location.href = "{% url 'tablero' object.pk %}";
+                    } else {
+                        var composed_mensajes = "";
+                        for(var i= 0; i < res.messages.length; i++) {
+                            composed_mensajes+=res.messages[i] + "\n";
+                        }
+                        alert(`Se detectaron los siguientes errores:\n${composed_mensajes}`);
+                    }
+                })
+                .catch(err => console.error(err));
+        });
     });
 </script>
 {% endblock js_scripts %}
+{% block style %}
+<style>
+    .candidato-card {
+        cursor: pointer;
+    }
+</style>
+{% endblock style %}

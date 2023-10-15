@@ -31,7 +31,7 @@ class TableroView(LoginRequiredMixin, DetailView):
             fase = fase.siguiente_fase
         context["fases"].append(fase)
         return context
-    
+
 
 class NuevoTableroView(LoginRequiredMixin, TemplateView):
     template_name = "applications/nuevo_tablero.html"
