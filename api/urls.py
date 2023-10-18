@@ -1,6 +1,6 @@
 from django.urls import include, path
 
-from .views import TableroView, CandidatoView, EliminarTableroView
+from .views import TableroView, CandidatoView, EliminarTableroView, ComentarioView
 
 urlpatterns = [
     path("tablero/", TableroView.as_view(), name="api_tablero"),
@@ -10,4 +10,6 @@ urlpatterns = [
         name="eliminar_tablero",
     ),
     path("candidato/", CandidatoView.as_view(), name="api_candidato"),
+    path("candidato/<candidato_id>/", CandidatoView.as_view(), name="detalle_candidato"),
+    path("comentario/", ComentarioView.as_view(), name="api_comentario"),
 ]

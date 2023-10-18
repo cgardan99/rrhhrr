@@ -60,8 +60,8 @@
                     </div><br>
                     <div class="input-group">
                         <label class="input-group-text" for="email">Email</label>
-                        <input type="email" id="email" placeholder="correo@example.com" class="form-control" name="email"
-                            required>
+                        <input type="email" id="email" placeholder="correo@example.com" class="form-control"
+                            name="email" required>
                     </div><br>
                     <div class="input-group">
                         <label class="input-group-text" for="telefono">Número de Teléfono</label>
@@ -70,7 +70,8 @@
                     </div><br>
                     <div class="input-group">
                         <label class="input-group-text" for="edo_civil">Estado Civil</label>
-                        <select class="form-select" aria-label="Disabled select example" id="edo_civil" name="edo_civil">
+                        <select class="form-select" aria-label="Disabled select example" id="edo_civil"
+                            name="edo_civil">
                             <option value="SOLTERO">Soltero</option>
                             <option value="CASADO">Casado</option>
                             <option value="DIVORCIADO">Divorciado</option>
@@ -119,52 +120,105 @@
             </div>
             <div class="modal-body p-4">
                 <h4>Resumen del Candidato</h4>
-                <b>Nombre Completo:</b> Juan Alberto Arena.<br>
-                <b>Fecha de Nacimiento:</b> 28 de Agosto de 1999.<br>
-                <b>Estado Civil:</b> Casado.<br>
-                <b>Nacionalidad:</b> Mexicano.<br>
-                <b>Teléfono:</b> 449 383 3215<br>
-                <b>Correo Electrónico:</b> juanalberto@arena.com<br>
+                <form class="form-editar-candidato" method="POST">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <label class="input-group-text" for="nombre">Nombre(s) del Candidato</label>
+                        <input id="nombre-candidato-editar" class="form-control" type="text" name="nombre"
+                            maxlength="100" placeholder="Santa Juana" required>
+                    </div><br>
+                    <div class="input-group">
+                        <label class="input-group-text" for="apellidos">Apellido(s) del
+                            Candidato</label>
+                        <input id="apellidos-candidato-editar" class="form-control" type="text" name="apellidos"
+                            maxlength="100" placeholder="De la Cruz Saucedo" required>
+                    </div><br>
+                    <div class="input-group">
+                        <label class="input-group-text" for="puesto_deseado">Puesto Deseado</label>
+                        <input id="puesto-deseado-editar" class="form-control" type="text" name="puesto_deseado"
+                            maxlength="100" placeholder="Control de Máquinas" required>
+                    </div><br>
+                    <div class="input-group">
+                        <label class="input-group-text" for="fecha-de-nacimiento">Fecha de
+                            Nacimiento</label>
+                        <input type="date" id="fecha-de-nacimiento" class="form-control" name="fecha_de_nacimiento"
+                            required>
+                    </div><br>
+                    <div class="input-group">
+                        <label class="input-group-text" for="email">Email</label>
+                        <input type="email" id="email-editar" placeholder="correo@example.com" class="form-control"
+                            name="email" required>
+                    </div><br>
+                    <div class="input-group">
+                        <label class="input-group-text" for="telefono">Número de Teléfono</label>
+                        <input type="tel" id="telefono-editar" placeholder="4493846514" class="form-control"
+                            name="telefono" required>
+                    </div><br>
+                    <div class="input-group">
+                        <label class="input-group-text" for="edo_civil">Estado Civil</label>
+                        <select class="form-select" aria-label="Disabled select example" id="edo_civil-editar"
+                            name="edo_civil">
+                            <option value="SOLTERO">Soltero</option>
+                            <option value="CASADO">Casado</option>
+                            <option value="DIVORCIADO">Divorciado</option>
+                            <option value="VIUDI">Viudo</option>
+                        </select>
+                    </div><br>
+                    <button type="submit" id="finalizar-editar-candidato" class="btn btn-primary">Guardar
+                        Cambios</button>
+                </form>
                 <hr>
                 <h4>Comentarios y Documentos</h4>
                 <table class="table">
                     <tr>
                         <th>Hora y Fecha</th>
-                        <th colspan="2">Documento/Comentario</th>
+                        <th>Documento/Comentario</th>
+                        <th>Generado en Fase</th>
+                        <th>Eliminar</th>
                     </tr>
-                    <tr>
-                        <td>2023-09-12 11:00 pm</td>
-                        <td>
-                            <b>Usuario 1 Añadió:</b><br>
-                            <a href="">Solicitud.pdf</a><br>
-                            <b>Descripción:</b> CV del Candidato. <br>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#eliminarArchivoModal">❌</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2023-09-13 11:20 am</td>
-                        <td>
-                            <b>Usuario 1 Comentó:</b><br>
-                            <p><i>Se llamó al candidato esta mañana, la intención de la llamada era indicarle la fecha
-                                    para entrevistarlo, no contestó. Intentaré llamar más tarde.</i></p>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#eliminarArchivoModal">❌</button>
-                        </td>
-                    </tr>
+                    <tbody class="resumen-comentarios-archivos">
+                        <tr>
+                            <td>2023-09-12 11:00 pm</td>
+                            <td>
+                                <b>Usuario 1 Añadió:</b><br>
+                                <a href="">Solicitud.pdf</a><br>
+                                <b>Descripción:</b> CV del Candidato. <br>
+                            </td>
+                            <td>
+                                Entrevista
+                            </td>
+                            <td>
+                                <button class="btn btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#eliminarArchivoModal">❌</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2023-09-13 11:20 am</td>
+                            <td>
+                                <b>Usuario 1 Comentó:</b><br>
+                                <p><i>Se llamó al candidato esta mañana, la intención de la llamada era indicarle la
+                                        fecha
+                                        para entrevistarlo, no contestó. Intentaré llamar más tarde.</i></p>
+                            </td>
+                            <td>
+                                Aplicantes
+                            </td>
+                            <td>
+                                <button class="btn btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#eliminarArchivoModal">❌</button>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
                 <hr>
                 <nav>
                     <div class="nav nav-tabs m-3" id="nav-tab" role="tablist">
-                        <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab"
+                        <button class="nav-link active" data-kind="comentario" id="nav-home-tab" data-bs-toggle="tab"
                             data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home"
                             aria-selected="true">Comentar</button>
-                        <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile"
-                            type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Subir
+                        <button class="nav-link" data-kind="documento" id="nav-profile-tab" data-bs-toggle="tab"
+                            data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile"
+                            aria-selected="false">Subir
                             Documento</button>
                     </div>
                 </nav>
@@ -175,8 +229,7 @@
                         <div class="mb-3">
                             <label for="basic-url" class="form-label">Comenta:</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="basic-url"
-                                    aria-describedby="basic-addon3 basic-addon4">
+                                <input type="text" class="form-control" id="comentario-input">
                             </div>
                         </div>
                     </div>
@@ -189,12 +242,12 @@
                         <div class="mb-3">
                             <label for="basic-url" class="form-label">Añade una descripción del documento</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="basic-url"
-                                    aria-describedby="basic-addon3 basic-addon4">
+                                <input type="text" class="form-control" id="documento-input">
                             </div>
                         </div>
                     </div>
                 </div>
+                <button class="btn btn-primary subir-comentario-documento">Subir</button>
             </div>
 
             <div class="modal-footer">
@@ -215,12 +268,14 @@
             <div class="card m-2 candidato-card">
                 <div class="card-body">
                     <h5 class="card-title">{{ candidato.nombres }} {{ candidato.apellidos }}</h5>
-                    <h6 class="card-subtitle mb-2 text-body-secondary">Puesto deseado: {{ candidato.puesto_deseado }}</h6>
+                    <h6 class="card-subtitle mb-2 text-body-secondary">Puesto deseado: {{ candidato.puesto_deseado }}
+                    </h6>
                     <p class="card-text">Fecha de inicio de proceso: {{ candidato.agregado_el }}</p>
-                    <a href="#" class="btn btn-secondary btn-sm card-link" data-bs-toggle="modal"
-                        data-bs-target="#candidatoModal">Ver Candidato</a>
-                    <button href="#" class="btn btn-danger btn-sm card-link" data-bs-toggle="modal"
-                        data-bs-target="#eliminarCandidatoModal">Eliminar Candidato</a>
+                    <button data-candidato-id="{{ candidato.pk }}"
+                        class="toggle-candidato btn btn-secondary btn-sm card-link" data-bs-toggle="modal"
+                        data-bs-target="#candidatoModal">Ver Candidato</button>
+                    <button class="btn btn-danger btn-sm card-link" data-bs-toggle="modal"
+                        data-bs-target="#eliminarCandidatoModal">Eliminar Candidato</button>
                 </div>
             </div>
             {% endfor %}
@@ -234,11 +289,16 @@
 <script src='https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.js'></script>
 <script>
     $(window).on("load", function () {
-        dragula($(".contenedor").toArray());a
+        var kind = "comentario";
+        var current_candidato_id = null;
+        dragula($(".contenedor").toArray());
+        $(".nav-link").on("click", function (evt) {
+            kind = $(evt.target).data("kind");
+        });
         $(".form-nuevo-candidato").on("submit", function (e) {
             e.preventDefault();
             var payload = {
-                tablero_asignado: {{ object.pk }},
+                tablero_asignado: parseInt("{{ object.pk }}"),
                 nombres: $("#nombre-candidato").val(),
                 apellidos: $("#apellidos-candidato").val(),
                 puesto_deseado: $("#puesto-deseado").val(),
@@ -256,18 +316,131 @@
             })
                 .then(res => res.json())
                 .then((res) => {
-                    if(res.messages.length == 0) {
+                    if (res.messages.length == 0) {
                         alert("Candidato creado!");
                         window.location.href = "{% url 'tablero' object.pk %}";
                     } else {
                         var composed_mensajes = "";
-                        for(var i= 0; i < res.messages.length; i++) {
-                            composed_mensajes+=res.messages[i] + "\n";
+                        for (var i = 0; i < res.messages.length; i++) {
+                            composed_mensajes += res.messages[i] + "\n";
                         }
                         alert(`Se detectaron los siguientes errores:\n${composed_mensajes}`);
                     }
                 })
                 .catch(err => console.error(err));
+        });
+        function compare_dates(a, b) {
+            if (a.creado_el < b.creado_el) {
+                return -1;
+            }
+            if (a.creado_el > b.creado_el) {
+                return 1;
+            }
+            return 0;
+        }
+        function load_candidato(id_candidato) {
+            var url = window.location.origin + `/api/candidato/${id_candidato}`;
+            fetch(url, {})
+                .then(res => res.json())
+                .then((res) => {
+                    if (res.messages.length == 0) {
+                        var table_log = res.candidato.comentarios.concat(res.candidato.archivos);
+                        table_log = table_log.sort(compare_dates);
+                        $("#nombre-candidato-editar").val(res.candidato.nombres);
+                        $("#apellidos-candidato-editar").val(res.candidato.apellidos);
+                        $("#puesto-deseado-editar").val(res.candidato.puesto_deseado);
+                        $("#fecha-de-nacimiento-editar").val(res.candidato.fecha_de_nacimiento);
+                        $("#email-editar").val(res.candidato.email);
+                        $("#telefono-editar").val(res.candidato.telefono);
+                        $("#edo_civil-editar").val(res.candidato.estado_civil);
+                        var texto = "";
+                        for (var i = 0; i < table_log.length; i++) {
+                            if (table_log[i].tipo == "COMENTARIO") {
+                                texto += `<tr>
+                                    <td>${table_log[i].creado_el}</td>
+                                    <td>
+                                        <b>${table_log[i].comentado_por} Comentó:</b><br>
+                                        <p><i>${table_log[i].texto}</i></p>
+                                    </td>
+                                    <td>
+                                        ${table_log[i].fase}
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm delete-comentario" data-bs-toggle="modal"
+                                            data-bs-target="#eliminarComentarioModal" data-pk="${table_log[i].pk}">❌</button>
+                                    </td>
+                                </tr>`;
+                            } else {
+                                texto += `<tr>
+                                    <td>${table_log[i].creado_el}</td>
+                                    <td>
+                                        <b>${table_log[i].subido_por} Añadió:</b><br>
+                                        <a href="${table_log[i].archivo}">${table_log[i].archivo}</a><br>
+                                        <b>Descripción:</b>${table_log[i].descripcion}<br>
+                                    </td>
+                                    <td>
+                                        ${table_log[i].fase}
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm delete-archivo" data-bs-toggle="modal"
+                                            data-bs-target="#eliminarArchivoModal" data-pk="${table_log[i].pk}">❌</button>
+                                    </td>
+                                </tr>`;
+                            }
+                        }
+                        $(".resumen-comentarios-archivos").html(texto);
+                    } else {
+                        var composed_mensajes = "";
+                        for (var i = 0; i < res.messages.length; i++) {
+                            composed_mensajes += res.messages[i] + "\n";
+                        }
+                        alert(`Se detectaron los siguientes errores:\n${composed_mensajes}`);
+                    }
+                })
+                .catch(err => console.error(err));
+        }
+        $(".toggle-candidato").on("click", function (evt) {
+            var id_candidato = $(evt.target).data("candidato-id");
+            current_candidato_id = id_candidato;
+            load_candidato(id_candidato);
+        });
+        $(".subir-comentario-documento").on("click", function () {
+            if (kind == "comentario") {
+                if ($("#comentario-input").val() != "") {
+                    var payload = {
+                        comentado_por: parseInt("{{ request.user.pk }}"),
+                        comentario: $("#comentario-input").val(),
+                        fase: 1,
+                        texto: $("#comentario-input").val(),
+                        candidato: current_candidato_id,
+                    };
+                    fetch("{% url 'api_comentario' %}", {
+                        method: "POST",
+                        body: JSON.stringify(
+                            payload
+                        ),
+                        headers: { "X-CSRFToken": "{{ csrf_token }}", "Content-Type": "application/json" }
+                    })
+                        .then(res => res.json())
+                        .then((res) => {
+                            if (res.messages.length == 0) {
+                                load_candidato(current_candidato_id);
+                                $("#comentario-input").val("");
+                            } else {
+                                var composed_mensajes = "";
+                                for (var i = 0; i < res.messages.length; i++) {
+                                    composed_mensajes += res.messages[i] + "\n";
+                                }
+                                alert(`Se detectaron los siguientes errores:\n${composed_mensajes}`);
+                            }
+                        })
+                        .catch(err => console.error(err));
+                } else {
+                    alert("Por favor, completa el comentario.");
+                }
+            } else {
+
+            }
         });
     });
 </script>

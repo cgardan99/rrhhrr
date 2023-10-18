@@ -1,10 +1,10 @@
-from api.serializers import FaseSerializer, TableroSerializer, CandidatoSerializer
+from api.serializers import FaseSerializer, TableroSerializer, CandidatoSerializer, ComentarioSerializer
 from rest_framework import views, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 import datetime as dt
 
-from applications.models import Tablero
+from applications.models import Tablero, Candidato
 
 from django.views.generic import View
 from django.shortcuts import redirect
@@ -87,6 +87,18 @@ class EliminarTableroView(View):
 class CandidatoView(views.APIView):
     permission_classes = [IsAuthenticated]
 
+    def get(self, response, candidato_id, format=None):
+        try:
+            candidato = Candidato.objects.get(pk=candidato_id)
+        except Candidato.DoesNotExist:
+            candidato = None
+        return Response(
+            {"messages": [], "candidato": candidato.to_json()}
+            if candidato
+            else {"messages": ["Candidato no Encontrado"]},
+            status=status.HTTP_404_NOT_FOUND if not candidato else status.HTTP_200_OK,
+        )
+
     def post(self, response, format=None):
         mensajes = []
         error = False
@@ -100,6 +112,31 @@ class CandidatoView(views.APIView):
                 "Por favor, verifica la integridad de los datos del candidato."
             )
             for tipo, mensaje in candidato_serializer.errors.items():
+                mensajes.append(f"{tipo}, {mensaje[0]}")
+        return Response(
+            {"messages": mensajes},
+            status=status.HTTP_201_CREATED
+            if not error
+            else status.HTTP_400_BAD_REQUEST,
+        )
+
+
+class ComentarioView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, response, format=None):
+        mensajes = []
+        error = False
+        comentario_serializer = ComentarioSerializer(data=self.request.data)
+        if comentario_serializer.is_valid():
+            candidato = comentario_serializer.save()
+            candidato.save()
+        else:
+            error = True
+            mensajes.append(
+                "Por favor, verifica la integridad de los datos del comentario."
+            )
+            for tipo, mensaje in comentario_serializer.errors.items():
                 mensajes.append(f"{tipo}, {mensaje[0]}")
         return Response(
             {"messages": mensajes},
