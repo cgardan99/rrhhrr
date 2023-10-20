@@ -82,9 +82,9 @@ class Archivo(models.Model):
     subido_por = models.ForeignKey(User, on_delete=models.CASCADE)
     fase = models.ForeignKey(Fase, on_delete=models.CASCADE)
     candidato = models.ForeignKey(Candidato, on_delete=models.CASCADE)
-    creado_el = models.DateTimeField(auto_now_add=True)
-    archivo = models.FileField(upload_to="")
+    archivo = models.FileField()
     descripcion = models.CharField(max_length=100)
+    creado_el = models.DateTimeField(auto_now_add=True)
 
     def to_json(self):
         return {
@@ -93,6 +93,7 @@ class Archivo(models.Model):
             "subido_por": self.subido_por.username,
             "fase": self.fase.nombre,
             "descripcion": self.descripcion,
-            "archivo": self.archivo,
+            "archivo": self.archivo.url,
+            "archivo_nombre": self.archivo.name,
             "creado_el": str(self.creado_el),
         }

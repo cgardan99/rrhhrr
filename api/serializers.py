@@ -1,4 +1,4 @@
-from applications.models import Fase, Tablero, Candidato, Comentario
+from applications.models import Fase, Tablero, Candidato, Comentario, Archivo
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
@@ -83,7 +83,7 @@ class CandidatoSerializer(serializers.Serializer):
         candidato = Candidato(**validated_data)
         candidato.fase_actual = tablero.fase_set.get(es_primer_fase=True)
         candidato.save()
-        return candidato       
+        return candidato
 
 
 class ComentarioSerializer(serializers.Serializer):
@@ -102,7 +102,39 @@ class ComentarioSerializer(serializers.Serializer):
         Model = Comentario
 
     def create(self, validated_data):
-        validated_data["comentado_por"] = User.objects.get(pk=validated_data["comentado_por"])
-        validated_data["candidato"] = Candidato.objects.get(pk=validated_data["candidato"])
+        validated_data["comentado_por"] = User.objects.get(
+            pk=validated_data["comentado_por"]
+        )
+        validated_data["candidato"] = Candidato.objects.get(
+            pk=validated_data["candidato"]
+        )
         validated_data["fase"] = validated_data["candidato"].fase_actual
         return Comentario(**validated_data)
+
+
+class ArchivoSerializer(serializers.Serializer):
+    subido_por = serializers.IntegerField()
+    fase = serializers.IntegerField()
+    candidato = serializers.IntegerField()
+    archivo = serializers.FileField()
+    descripcion = serializers.CharField()
+
+    class Meta:
+        fields = (
+            "subido_por",
+            "fase",
+            "candidato",
+            "archivo",
+            "descripcion",
+        )
+        Model = Archivo
+
+    def create(self, validated_data):
+        validated_data["subido_por"] = User.objects.get(
+            pk=validated_data["subido_por"]
+        )
+        validated_data["candidato"] = Candidato.objects.get(
+            pk=validated_data["candidato"]
+        )
+        validated_data["fase"] = validated_data["candidato"].fase_actual
+        return Archivo(**validated_data)

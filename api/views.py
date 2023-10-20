@@ -1,10 +1,16 @@
-from api.serializers import FaseSerializer, TableroSerializer, CandidatoSerializer, ComentarioSerializer
+from api.serializers import (
+    FaseSerializer,
+    TableroSerializer,
+    CandidatoSerializer,
+    ComentarioSerializer,
+    ArchivoSerializer,
+)
 from rest_framework import views, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 import datetime as dt
 
-from applications.models import Tablero, Candidato
+from applications.models import Tablero, Candidato, Fase, Archivo, Comentario
 
 from django.views.generic import View
 from django.shortcuts import redirect
@@ -120,6 +126,46 @@ class CandidatoView(views.APIView):
             else status.HTTP_400_BAD_REQUEST,
         )
 
+    def patch(self, response, format=None):
+        mensajes = []
+        error = False
+        try:
+            candidato = Candidato.objects.get(
+                pk=self.request.data["current_candidato_id"]
+            )
+            candidato.nombres = self.request.data["nombres"]
+            candidato.apellidos = self.request.data["apellidos"]
+            candidato.puesto_deseado = self.request.data["puesto_deseado"]
+            candidato.fecha_de_nacimiento = self.request.data["fecha_de_nacimiento"]
+            candidato.email = self.request.data["email"]
+            candidato.telefono = self.request.data["telefono"]
+            candidato.estado_civil = self.request.data["estado_civil"]
+            candidato.save()
+        except Candidato.DoesNotExist:
+            error = True
+            mensajes.append(
+                "Por favor, verifica la integridad de los datos del candidato."
+            )
+        return Response(
+            {"messages": mensajes},
+            status=status.HTTP_201_CREATED
+            if not error
+            else status.HTTP_400_BAD_REQUEST,
+        )
+
+    def delete(self, response, candidato_id, format=None):
+        try:
+            candidato = Candidato.objects.get(pk=candidato_id)
+            candidato.delete()
+        except Candidato.DoesNotExist:
+            candidato = None
+        return Response(
+            {"messages": []}
+            if candidato
+            else {"messages": ["Candidato no Encontrado"]},
+            status=status.HTTP_404_NOT_FOUND if not candidato else status.HTTP_200_OK,
+        )
+
 
 class ComentarioView(views.APIView):
     permission_classes = [IsAuthenticated]
@@ -143,4 +189,68 @@ class ComentarioView(views.APIView):
             status=status.HTTP_201_CREATED
             if not error
             else status.HTTP_400_BAD_REQUEST,
+        )
+
+
+class ArchivoView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, response, format=None):
+        mensajes = []
+        error = False
+        archivo_serializer = ArchivoSerializer(data=self.request.data)
+        if archivo_serializer.is_valid():
+            archivo = archivo_serializer.save()
+            archivo.save()
+        else:
+            error = True
+            mensajes.append(
+                "Por favor, verifica la integridad de los datos del comentario."
+            )
+            for tipo, mensaje in archivo_serializer.errors.items():
+                mensajes.append(f"{tipo}, {mensaje[0]}")
+        return Response(
+            {"messages": mensajes},
+            status=status.HTTP_201_CREATED
+            if not error
+            else status.HTTP_400_BAD_REQUEST,
+        )
+
+
+class CambiarFaseView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, response, candidato_id, fase_id, format=None):
+        try:
+            candidato = Candidato.objects.get(pk=candidato_id)
+            fase = Fase.objects.get(pk=fase_id)
+            candidato.fase_actual = fase
+            candidato.save()
+        except (Candidato.DoesNotExist, Fase.DoesNotExist):
+            candidato = None
+            fase = None
+        return Response(
+            {"messages": []}
+            if (candidato and fase)
+            else {"messages": ["Fase y/o Candidato no Encontrado"]},
+            status=status.HTTP_404_NOT_FOUND if not candidato else status.HTTP_200_OK,
+        )
+
+
+class EliminarElementoView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, response, tipo, pk, format=None):
+        try:
+            elemento = (
+                Comentario.objects.get(pk=pk)
+                if tipo == "comentario"
+                else Archivo.objects.get(pk=pk)
+            )
+            elemento.delete()
+        except Candidato.DoesNotExist:
+            elemento = None
+        return Response(
+            {"messages": []} if elemento else {"messages": ["Elemento no Encontrado"]},
+            status=status.HTTP_404_NOT_FOUND if not elemento else status.HTTP_200_OK,
         )

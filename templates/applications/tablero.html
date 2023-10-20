@@ -15,11 +15,11 @@
             <div class="modal-body">
                 <b>¡No podrás deshacer esta acción!</b>. El Candidato será eliminado de este tablero, junto con la
                 información adjunta. <br>
-                <b>Candidado: </b> Juan Alberto Arena.
+                <b>Candidado: </b> <i id="nombre-del-candidato-a-eliminar">Juan Alberto Arena.</i>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-danger">Entiendo. Eliminar.</button>
+                <button class="btn btn-danger" id="boton-eliminar-candidato">Entiendo. Eliminar.</button>
             </div>
         </div>
     </div>
@@ -89,22 +89,20 @@
 
 <button class="btn btn-success" id="agregar-candidato" data-bs-toggle="modal"
     data-bs-target="#agregarCandidatoModal">Añadir Candidato ⨁</button>
-<div class="modal fade" id="eliminarArchivoModal" tabindex="-1" aria-labelledby="eliminarArchivoModalLabel"
+<div class="modal fade" id="eliminarArchivoComentarioModal" tabindex="-1" aria-labelledby="eliminarArchivoComentarioModalLabel"
     aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="eliminarArchivoModalLabel">¿Seguro de eliminar el archivo?</h1>
+                <h1 class="modal-title fs-5" id="eliminarArchivoComentarioModalLabel">¿Seguro de eliminar el elemento?</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <b>¡No podrás deshacer esta acción!</b>. El archivo será removido del Candidato. <br>
-                <b>Archivo: </b> Solicitud.pdf <br>
-                <b>Candidado: </b> Juan Alberto Arena.
+                <b>¡No podrás deshacer esta acción!</b>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-danger">Entiendo. Eliminar.</button>
+                <button type="button" class="btn btn-danger" id="boton-eliminar-archivo-comentario">Entiendo. Eliminar.</button>
             </div>
         </div>
     </div>
@@ -139,10 +137,10 @@
                             maxlength="100" placeholder="Control de Máquinas" required>
                     </div><br>
                     <div class="input-group">
-                        <label class="input-group-text" for="fecha-de-nacimiento">Fecha de
+                        <label class="input-group-text" for="fecha-de-nacimiento-editar">Fecha de
                             Nacimiento</label>
-                        <input type="date" id="fecha-de-nacimiento" class="form-control" name="fecha_de_nacimiento"
-                            required>
+                        <input type="date" id="fecha-de-nacimiento-editar" class="form-control"
+                            name="fecha_de_nacimiento" required>
                     </div><br>
                     <div class="input-group">
                         <label class="input-group-text" for="email">Email</label>
@@ -155,7 +153,7 @@
                             name="telefono" required>
                     </div><br>
                     <div class="input-group">
-                        <label class="input-group-text" for="edo_civil">Estado Civil</label>
+                        <label class="input-group-text" for="edo_civil-editar">Estado Civil</label>
                         <select class="form-select" aria-label="Disabled select example" id="edo_civil-editar"
                             name="edo_civil">
                             <option value="SOLTERO">Soltero</option>
@@ -263,9 +261,9 @@
         <div class="card-header">
             Fase {{ forloop.counter }}: {{ fase.nombre }}
         </div>
-        <div class="card-body contenedor h-100">
+        <div class="card-body contenedor h-100" data-fase-pk="{{ fase.pk }}">
             {% for candidato in fase.candidato_set.all %}
-            <div class="card m-2 candidato-card">
+            <div class="card m-2 candidato-card" data-candidato-pk="{{ candidato.pk }}">
                 <div class="card-body">
                     <h5 class="card-title">{{ candidato.nombres }} {{ candidato.apellidos }}</h5>
                     <h6 class="card-subtitle mb-2 text-body-secondary">Puesto deseado: {{ candidato.puesto_deseado }}
@@ -274,7 +272,9 @@
                     <button data-candidato-id="{{ candidato.pk }}"
                         class="toggle-candidato btn btn-secondary btn-sm card-link" data-bs-toggle="modal"
                         data-bs-target="#candidatoModal">Ver Candidato</button>
-                    <button class="btn btn-danger btn-sm card-link" data-bs-toggle="modal"
+                    <button data-candidato-pk="{{ candidato.pk }}"
+                        data-nombre-candidato="{{ candidato.nombres }} {{ candidato.apellidos }}"
+                        class="btn btn-danger btn-sm card-link eliminar-candidato" data-bs-toggle="modal"
                         data-bs-target="#eliminarCandidatoModal">Eliminar Candidato</button>
                 </div>
             </div>
@@ -291,7 +291,27 @@
     $(window).on("load", function () {
         var kind = "comentario";
         var current_candidato_id = null;
-        dragula($(".contenedor").toArray());
+        var drake = dragula({
+            containers: $(".contenedor").toArray(),
+            copy: false
+        });
+        drake.on("drop", (el, handle) => {
+            var candidato_id = $(el).data("candidato-pk");
+            var fase_id = $(handle).data("fase-pk");
+            var url = window.location.origin + `/api/cambiar_fase/${candidato_id}/${fase_id}/`;
+            fetch(url, {})
+                .then(res => res.json())
+                .then((res) => {
+                    if (res.messages.length != 0) {
+                        var composed_mensajes = "";
+                        for (var i = 0; i < res.messages.length; i++) {
+                            composed_mensajes += res.messages[i] + "\n";
+                        }
+                        alert(`Se detectaron los siguientes errores:\n${composed_mensajes}`);
+                    }
+                })
+                .catch(err => console.error(err));
+        });
         $(".nav-link").on("click", function (evt) {
             kind = $(evt.target).data("kind");
         });
@@ -329,6 +349,69 @@
                 })
                 .catch(err => console.error(err));
         });
+
+        var candidato_a_eliminar = null;
+        var nombre_candidato_a_eliminar = null;
+        $(".eliminar-candidato").on("click", function (e) {
+            candidato_a_eliminar = $(e.target).data("candidato-pk");
+            nombre_candidato_a_eliminar = $(e.target).data("nombre-candidato");
+            var url = window.location.origin + `/api/candidato/${candidato_a_eliminar}/`;
+            $("#nombre-del-candidato-a-eliminar").html(nombre_candidato_a_eliminar);
+            $("#boton-eliminar-candidato").off("click")
+            $("#boton-eliminar-candidato").on("click", function() {
+                fetch(url, {
+                    method: "DELETE",
+                    headers: { "X-CSRFToken": "{{ csrf_token }}", "Content-Type": "application/json" }
+                })
+                    .then(res => res.json())
+                    .then((res) => {
+                        if (res.messages.length == 0) {
+                            alert("Candidato eliminado!");
+                            window.location.href = "{% url 'tablero' object.pk %}";
+                        } else {
+                            var composed_mensajes = "";
+                            for (var i = 0; i < res.messages.length; i++) {
+                                composed_mensajes += res.messages[i] + "\n";
+                            }
+                            alert(`Se detectaron los siguientes errores:\n${composed_mensajes}`);
+                        }
+                    })
+                    .catch(err => console.error(err));
+            });
+        });
+        $(".form-editar-candidato").on("submit", function (e) {
+            e.preventDefault();
+            var payload = {
+                current_candidato_id: current_candidato_id,
+                nombres: $("#nombre-candidato-editar").val(),
+                apellidos: $("#apellidos-candidato-editar").val(),
+                puesto_deseado: $("#puesto-deseado-editar").val(),
+                fecha_de_nacimiento: $("#fecha-de-nacimiento-editar").val(),
+                email: $("#email-editar").val(),
+                telefono: $("#telefono-editar").val(),
+                estado_civil: $("#edo_civil-editar").val(),
+            }
+            fetch("{% url 'api_candidato' %}", {
+                method: "PATCH",
+                body: JSON.stringify(
+                    payload
+                ),
+                headers: { "X-CSRFToken": "{{ csrf_token }}", "Content-Type": "application/json" }
+            })
+                .then(res => res.json())
+                .then((res) => {
+                    if (res.messages.length == 0) {
+                        alert("Candidato modificado!");
+                    } else {
+                        var composed_mensajes = "";
+                        for (var i = 0; i < res.messages.length; i++) {
+                            composed_mensajes += res.messages[i] + "\n";
+                        }
+                        alert(`Se detectaron los siguientes errores:\n${composed_mensajes}`);
+                    }
+                })
+                .catch(err => console.error(err));
+        });
         function compare_dates(a, b) {
             if (a.creado_el < b.creado_el) {
                 return -1;
@@ -337,6 +420,35 @@
                 return 1;
             }
             return 0;
+        }
+        var elemento_a_eliminar = null;
+        var tipo_a_eliminar = null;
+        function load_eliminar() {
+            $(".eliminar-archivo-comentario").on("click", function (e) {
+                elemento_a_eliminar = $(e.target).data("pk");
+                tipo =  $(e.target).data("tipo");
+                var url = window.location.origin + `/api/eliminar/${tipo}/${elemento_a_eliminar}/`;
+                $("#boton-eliminar-archivo-comentario").off("click");
+                $("#boton-eliminar-archivo-comentario").on("click", function() {
+                    fetch(url, {
+                        method: "DELETE",
+                        headers: { "X-CSRFToken": "{{ csrf_token }}", "Content-Type": "application/json" }
+                    })
+                        .then(res => res.json())
+                        .then((res) => {
+                            if (res.messages.length == 0) {
+                                $(`.toggle-candidato[data-candidato-id="${current_candidato_id}"]`).click();
+                            } else {
+                                var composed_mensajes = "";
+                                for (var i = 0; i < res.messages.length; i++) {
+                                    composed_mensajes += res.messages[i] + "\n";
+                                }
+                                alert(`Se detectaron los siguientes errores:\n${composed_mensajes}`);
+                            }
+                        })
+                        .catch(err => console.error(err));
+                });
+            });
         }
         function load_candidato(id_candidato) {
             var url = window.location.origin + `/api/candidato/${id_candidato}`;
@@ -366,8 +478,10 @@
                                         ${table_log[i].fase}
                                     </td>
                                     <td>
-                                        <button class="btn btn-sm delete-comentario" data-bs-toggle="modal"
-                                            data-bs-target="#eliminarComentarioModal" data-pk="${table_log[i].pk}">❌</button>
+                                        <button class="btn btn-sm eliminar-archivo-comentario" data-bs-toggle="modal"
+                                            data-bs-target="#eliminarArchivoComentarioModal"
+                                            data-pk="${table_log[i].pk}"
+                                            data-tipo="comentario">❌</button>
                                     </td>
                                 </tr>`;
                             } else {
@@ -375,20 +489,23 @@
                                     <td>${table_log[i].creado_el}</td>
                                     <td>
                                         <b>${table_log[i].subido_por} Añadió:</b><br>
-                                        <a href="${table_log[i].archivo}">${table_log[i].archivo}</a><br>
-                                        <b>Descripción:</b>${table_log[i].descripcion}<br>
+                                        <a target="_blank" href="${table_log[i].archivo}">${table_log[i].archivo_nombre}</a><br>
+                                        <b>Descripción: </b>${table_log[i].descripcion}<br>
                                     </td>
                                     <td>
                                         ${table_log[i].fase}
                                     </td>
                                     <td>
-                                        <button class="btn btn-sm delete-archivo" data-bs-toggle="modal"
-                                            data-bs-target="#eliminarArchivoModal" data-pk="${table_log[i].pk}">❌</button>
+                                        <button class="btn btn-sm eliminar-archivo-comentario" data-bs-toggle="modal"
+                                            data-bs-target="#eliminarArchivoComentarioModal"
+                                            data-pk="${table_log[i].pk}"
+                                            data-tipo="archivo">❌</button>
                                     </td>
                                 </tr>`;
                             }
                         }
                         $(".resumen-comentarios-archivos").html(texto);
+                        load_eliminar();
                     } else {
                         var composed_mensajes = "";
                         for (var i = 0; i < res.messages.length; i++) {
@@ -399,6 +516,7 @@
                 })
                 .catch(err => console.error(err));
         }
+        
         $(".toggle-candidato").on("click", function (evt) {
             var id_candidato = $(evt.target).data("candidato-id");
             current_candidato_id = id_candidato;
@@ -439,7 +557,38 @@
                     alert("Por favor, completa el comentario.");
                 }
             } else {
+                if ($("#documento-input").val() != "" && $("#formFile").val() != "") {
+                    var file_field = $("#formFile");
+                    var form_data = new FormData();
+                    form_data.append("subido_por", parseInt("{{ request.user.pk }}"));
+                    form_data.append("fase", 1);
+                    form_data.append("candidato", current_candidato_id);
+                    form_data.append("archivo", file_field.prop("files")[0]);
+                    form_data.append("descripcion", $("#documento-input").val());
 
+                    fetch("{% url 'api_archivo' %}", {
+                        method: "POST",
+                        body: form_data,
+                        headers: { "X-CSRFToken": "{{ csrf_token }}" }
+                    })
+                        .then(res => res.json())
+                        .then((res) => {
+                            if (res.messages.length == 0) {
+                                load_candidato(current_candidato_id);
+                                $("#documento-input").val("");
+                                $("#formFile").val("");
+                            } else {
+                                var composed_mensajes = "";
+                                for (var i = 0; i < res.messages.length; i++) {
+                                    composed_mensajes += res.messages[i] + "\n";
+                                }
+                                alert(`Se detectaron los siguientes errores:\n${composed_mensajes}`);
+                            }
+                        })
+                        .catch(err => console.error(err));
+                } else {
+                    alert("Por favor, completa el formulario de documento.");
+                }
             }
         });
     });
